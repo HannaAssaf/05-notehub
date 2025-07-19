@@ -1,16 +1,16 @@
 import { useState } from "react";
 
 import SearchBox from "../SearchBox/SearchBox";
+import NoteList from "../NoteList/NoteList";
+import Pagination from "../Pagination/Pagination";
+import Loader from "../Loader/Loader";
+import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import css from "./App.module.css";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 // import type { Note } from "../../types/note";
 import { featchNotes } from "../../services/noteService";
-import Loader from "../Loader/Loader";
-import NoteList from "../NoteList/NoteList";
 
 function App() {
-  // const [count, setCount] = useState(0)
-
   const [page, setPage] = useState<number>(1);
   const [searchNote, setSearchNote] = useState<string>("");
   const { data, isLoading, isError, isSuccess } = useQuery({
@@ -25,15 +25,18 @@ function App() {
       <div className={css.app}>
         <header className={css.toolbar}>
           <SearchBox />
-          {/* Пагінація */}
-          {/* Кнопка створення нотатки */}
-          {isLoading && <Loader />}
-          {data && !isLoading && (
-            <NoteList
-              notes={{ results: data.results, total_pages: data.total_pages }}
+          {isSuccess && (
+            <Pagination
+              page={page}
+              totalPages={data.totalPages}
+              onPageChange={setPage}
             />
           )}
+          <button className={css.button}>Create note +</button>
         </header>
+        {isLoading && <Loader />}
+        {isError && <ErrorMessage />}
+        {data && !isLoading && <NoteList notes={data.notes} />}
       </div>
     </>
   );

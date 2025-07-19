@@ -9,8 +9,8 @@ const NOTEHUB_TOKEN = import.meta.env.VITE_NOTEHUB_TOKEN;
 
 interface FeatchNotesProps {
   page: number;
-  results: Note[];
-  total_pages: number;
+  notes: Note[];
+  totalPages: number;
   id: number;
 }
 export const featchNotes = async (

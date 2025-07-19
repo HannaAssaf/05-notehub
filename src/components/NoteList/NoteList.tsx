@@ -2,19 +2,17 @@ import css from "./NoteList.module.css";
 import type { Note } from "../../types/note";
 
 interface NoteListProps {
-  notes: {
-    results: Note[];
-    total_pages: number;
-  };
+  notes: Note[];
+  // totalPages: number;
 }
 
 export default function NoteList({ notes }: NoteListProps) {
-  if (notes.results.length === 0) {
+  if (!notes || notes.length === 0) {
     return null;
   }
   return (
     <ul className={css.list}>
-      {notes.results.map((note) => (
+      {notes.map((note) => (
         <li key={note.id} className={css.listItem}>
           <h2 className={css.title}>{note.title}</h2>
           <p className={css.content}>{note.content}</p>
