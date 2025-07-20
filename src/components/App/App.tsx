@@ -5,6 +5,8 @@ import NoteList from "../NoteList/NoteList";
 import Pagination from "../Pagination/Pagination";
 import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
+import Modal from "../Modal/Modal";
+import NoteForm from "../NoteForm/NoteForm";
 import css from "./App.module.css";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 // import type { Note } from "../../types/note";
@@ -18,8 +20,16 @@ function App() {
     queryFn: () => featchNotes(searchNote, page),
     placeholderData: keepPreviousData,
   });
-  console.log("data", data);
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
   return (
     <>
       <div className={css.app}>
@@ -32,11 +42,18 @@ function App() {
               onPageChange={setPage}
             />
           )}
-          <button className={css.button}>Create note +</button>
+          <button className={css.button} onClick={openModal}>
+            Create note +
+          </button>
         </header>
         {isLoading && <Loader />}
         {isError && <ErrorMessage />}
         {data && !isLoading && <NoteList notes={data.notes} />}
+        {isModalOpen && (
+          <Modal onClose={closeModal}>
+            <NoteForm />
+          </Modal>
+        )}
       </div>
     </>
   );
