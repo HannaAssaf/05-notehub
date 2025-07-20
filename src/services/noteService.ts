@@ -13,6 +13,12 @@ interface FeatchNotesProps {
   totalPages: number;
   id: number;
 }
+
+export interface NewNoteData {
+  title: string;
+  content?: string;
+  tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
+}
 export const featchNotes = async (
   search: string,
   page: number = 1,
@@ -34,4 +40,21 @@ export const featchNotes = async (
   };
   const response = await axios.get<FeatchNotesProps>(`/notes`, config);
   return response.data;
+};
+
+export const createNote = async (noteData: NewNoteData) => {
+  const response = await axios.post<Note>(`/notes`, noteData, {
+    headers: {
+      Authorization: `Bearer ${NOTEHUB_TOKEN}`,
+    },
+  });
+  return response.data;
+};
+
+export const deleteNote = async (noteId: string) => {
+  await axios.delete<Note>(`/notes/${noteId}`, {
+    headers: {
+      Authorization: `Bearer ${NOTEHUB_TOKEN}`,
+    },
+  });
 };

@@ -51,7 +51,7 @@ function App() {
         {data && !isLoading && <NoteList notes={data.notes} />}
         {isModalOpen && (
           <Modal onClose={closeModal}>
-            <NoteForm />
+            <NoteForm onCloseModal={closeModal} />
           </Modal>
         )}
       </div>

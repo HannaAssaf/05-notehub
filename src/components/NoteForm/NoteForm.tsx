@@ -1,8 +1,12 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import type { FormikHelpers } from "formik";
 import { useId } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as Yup from "yup";
 import css from "../NoteForm/NoteForm.module.css";
+import { createNote } from "../../services/noteService";
+import type { NoteTag } from "../../types/note";
+import { toast } from "react-hot-toast";
 
 const NoteSchema = Yup.object().shape({
   title: Yup.string()
@@ -17,8 +21,12 @@ const NoteSchema = Yup.object().shape({
 
 interface FormValues {
   title: string;
-  content: string;
+  content?: string;
   tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
+}
+
+interface NoteFormProps {
+  onCloseModal: () => void;
 }
 
 const formValues: FormValues = {
@@ -27,8 +35,23 @@ const formValues: FormValues = {
   tag: "Todo",
 };
 
-export default function NoteForm() {
+export default function NoteForm({ onCloseModal }: NoteFormProps) {
   const fieldId = useId();
+
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: createNote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["notes"],
+      });
+      onCloseModal();
+    },
+    onError() {
+      toast.error("Error creating note.");
+    },
+  });
 
   const handleSubmit = (
     values: FormValues,
@@ -36,6 +59,11 @@ export default function NoteForm() {
   ) => {
     console.log(values);
     formikHelpers.resetForm();
+    mutate({
+      title: values.title,
+      content: values.content ? values.content : "",
+      tag: values.tag,
+    });
   };
 
   return (
@@ -53,7 +81,7 @@ export default function NoteForm() {
             className={css.input}
             id={`${fieldId}-title`}
           />
-          <ErrorMessage name="title" className={css.error} />
+          <ErrorMessage name="title" component="span" className={css.error} />
         </div>
 
         <div className={css.formGroup}>
@@ -65,7 +93,7 @@ export default function NoteForm() {
             className={css.textarea}
             id={`${fieldId}-content`}
           />
-          <ErrorMessage name="content" className={css.error} />
+          <ErrorMessage name="content" component="span" className={css.error} />
         </div>
 
         <div className={css.formGroup}>
@@ -82,7 +110,7 @@ export default function NoteForm() {
             <option value="Meeting">Meeting</option>
             <option value="Shopping">Shopping</option>
           </Field>
-          <ErrorMessage name="tag" className={css.error} />
+          <ErrorMessage name="tag" component="span" className={css.error} />
         </div>
 
         <div className={css.actions}>
@@ -90,7 +118,7 @@ export default function NoteForm() {
             Cancel
           </button>
           <button type="submit" className={css.submitButton} disabled={false}>
-            Create note
+            {isPending ? "Creating new note..." : "Create Note"}
           </button>
         </div>
       </Form>

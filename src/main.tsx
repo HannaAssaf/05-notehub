@@ -7,6 +7,7 @@ import "modern-normalize";
 import App from "./components/App/App";
 
 const queryClient = new QueryClient();
+
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
