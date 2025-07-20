@@ -1,8 +1,19 @@
-import { Formik, Form, Field } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import type { FormikHelpers } from "formik";
 import { useId } from "react";
-// import * as yup from "yup";
+import * as Yup from "yup";
 import css from "../NoteForm/NoteForm.module.css";
+
+const NoteSchema = Yup.object().shape({
+  title: Yup.string()
+    .min(3, "Title must be at least 3 characters")
+    .max(50, "Title must be at most 50 characters")
+    .required("Title is required"),
+  content: Yup.string().max(50, "Content can be at most 50 characters"),
+  tag: Yup.string()
+    .oneOf(["Todo", "Work", "Personal", "Meeting", "Shopping"])
+    .required("Tag is required"),
+});
 
 interface FormValues {
   title: string;
@@ -31,7 +42,7 @@ export default function NoteForm() {
     <Formik
       initialValues={formValues}
       onSubmit={handleSubmit}
-      //   validationSchema={}
+      validationSchema={NoteSchema}
     >
       <Form className={css.form}>
         <div className={css.formGroup}>
@@ -42,7 +53,7 @@ export default function NoteForm() {
             className={css.input}
             id={`${fieldId}-title`}
           />
-          <span name="title" className={css.error} />
+          <ErrorMessage name="title" className={css.error} />
         </div>
 
         <div className={css.formGroup}>
@@ -54,7 +65,7 @@ export default function NoteForm() {
             className={css.textarea}
             id={`${fieldId}-content`}
           />
-          <span name="content" className={css.error} />
+          <ErrorMessage name="content" className={css.error} />
         </div>
 
         <div className={css.formGroup}>
@@ -71,18 +82,14 @@ export default function NoteForm() {
             <option value="Meeting">Meeting</option>
             <option value="Shopping">Shopping</option>
           </Field>
-          <span name="tag" className={css.error} />
+          <ErrorMessage name="tag" className={css.error} />
         </div>
 
         <div className={css.actions}>
           <button type="button" className={css.cancelButton}>
             Cancel
           </button>
-          <button
-            type="submit"
-            className={css.submitButton}
-            //   disabled=false
-          >
+          <button type="submit" className={css.submitButton} disabled={false}>
             Create note
           </button>
         </div>
