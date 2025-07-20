@@ -22,7 +22,7 @@ const NoteSchema = Yup.object().shape({
 interface FormValues {
   title: string;
   content?: string;
-  tag: "Todo" | "Work" | "Personal" | "Meeting" | "Shopping";
+  tag: NoteTag;
 }
 
 interface NoteFormProps {

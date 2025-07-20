@@ -5,7 +5,6 @@ import { deleteNote } from "../../services/noteService";
 
 interface NoteListProps {
   notes: Note[];
-  // totalPages: number;
 }
 
 export default function NoteList({ notes }: NoteListProps) {

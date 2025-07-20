@@ -9,32 +9,34 @@ import Modal from "../Modal/Modal";
 import NoteForm from "../NoteForm/NoteForm";
 import css from "./App.module.css";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-// import type { Note } from "../../types/note";
-import { featchNotes } from "../../services/noteService";
+import { fetchNotes } from "../../services/noteService";
+import { useDebouncedCallback } from "use-debounce";
 
 function App() {
   const [page, setPage] = useState<number>(1);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
   const [searchNote, setSearchNote] = useState<string>("");
+
+  const updateSearchNote = useDebouncedCallback((newSearchNote: string) => {
+    setSearchNote(newSearchNote);
+    setPage(1);
+  }, 300);
+
   const { data, isLoading, isError, isSuccess } = useQuery({
     queryKey: ["notes", searchNote, page],
-    queryFn: () => featchNotes(searchNote, page),
+    queryFn: () => fetchNotes(searchNote, page),
     placeholderData: keepPreviousData,
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
   return (
     <>
       <div className={css.app}>
         <header className={css.toolbar}>
-          <SearchBox />
+          <SearchBox value={searchNote} onSearch={updateSearchNote} />
           {isSuccess && (
             <Pagination
               page={page}
