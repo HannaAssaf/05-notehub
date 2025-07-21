@@ -21,7 +21,7 @@ const NoteSchema = Yup.object().shape({
 
 interface FormValues {
   title: string;
-  content?: string;
+  content: string;
   tag: NoteTag;
 }
 
@@ -114,7 +114,11 @@ export default function NoteForm({ onCloseModal }: NoteFormProps) {
         </div>
 
         <div className={css.actions}>
-          <button type="button" className={css.cancelButton}>
+          <button
+            type="button"
+            className={css.cancelButton}
+            onClick={onCloseModal}
+          >
             Cancel
           </button>
           <button type="submit" className={css.submitButton} disabled={false}>

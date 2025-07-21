@@ -7,31 +7,23 @@ axios.defaults.headers.common["Authorization"] = `Bearer ${
 }`;
 
 interface FetchNotesProps {
-  page: number;
   notes: Note[];
   totalPages: number;
-  id: number;
 }
 
 export interface NewNoteData {
   title: string;
-  content?: string;
+  content: string;
   tag: NoteTag;
 }
 export const fetchNotes = async (
   search: string,
-  page: number = 1,
-  perPage: number = 12,
-  tag?: string,
-  sortBy: string = "created"
+  page: number = 1
 ): Promise<FetchNotesProps> => {
   const config = {
     params: {
       ...(search ? { search } : {}),
       page,
-      perPage,
-      ...(tag ? { tag } : {}),
-      sortBy,
     },
   };
   const response = await axios.get<FetchNotesProps>(`/notes`, config);
@@ -44,5 +36,6 @@ export const createNote = async (noteData: NewNoteData) => {
 };
 
 export const deleteNote = async (noteId: string) => {
-  await axios.delete<Note>(`/notes/${noteId}`);
+  const response = await axios.delete<Note>(`/notes/${noteId}`);
+  return response.data;
 };
