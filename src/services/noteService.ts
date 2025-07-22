@@ -18,12 +18,14 @@ export interface NewNoteData {
 }
 export const fetchNotes = async (
   search: string,
-  page: number = 1
+  page: number = 1,
+  perPage: number = 12
 ): Promise<FetchNotesProps> => {
   const config = {
     params: {
       ...(search ? { search } : {}),
       page,
+      perPage,
     },
   };
   const response = await axios.get<FetchNotesProps>(`/notes`, config);
